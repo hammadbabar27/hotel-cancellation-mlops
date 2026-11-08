@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotel-cancellation-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hotel-cancellation-api
+  template:
+    metadata:
+      labels:
+        app: hotel-cancellation-api
+    spec:
+      containers:
+        - name: api
+          image: YOUR_DOCKERHUB_USERNAME/hotel-cancellation-api:build-1
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 800Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotel-cancellation-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: hotel-cancellation-api
+  ports:
+    - port: 8080
+      targetPort: 8000

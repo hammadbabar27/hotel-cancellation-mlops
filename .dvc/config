@@ -1,0 +1,5 @@
+[core]
+    remote = storage
+['remote "storage"']
+    url = s3://hotel-mlops-data-classification/dvc
+    region = eu-north-1
